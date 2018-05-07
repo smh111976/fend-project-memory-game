@@ -1,6 +1,26 @@
 /*
  * Create a list that holds all of your cards
  */
+ const deck = [
+   {suit: "diamond"}, {suit: "diamond"}, {suit: "paper-plane-o"}, {suit: "paper-plane-o"},
+   {suit: "anchor"}, {suit: "anchor"}, {suit: "bolt"}, {suit: "bolt"},
+   {suit: "cube"}, {suit: "cube"}, {suit: "leaf"}, {suit: "leaf"},
+   {suit: "bicycle"}, {suit: "bicycle"}, {suit: "bomb"}, {suit: "bomb"}
+ ];
+ let shuffledDeck = [];
+ const restart = document.querySelector('.restart');
+ restart.addEventListener('click', function(e) {
+   shuffledDeck = shuffle(deck);
+   const fragment = document.createDocumentFragment();
+   for(const card of shuffledDeck) {
+     const newCard = document.createElement('div');
+     const cardFront = document.createElement('div');
+     const cardBack = document.createElement('div');
+     let frontCls = ["foo", "bar"];
+     cardFront.classList.add(...frontCls);
+     console.log(cardFront.outerHTML);
+   }
+ })
 
 
 /*
