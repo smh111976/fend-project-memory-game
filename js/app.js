@@ -11,11 +11,16 @@
  const deckTable = document.querySelector('section.deck');
  // new array for the shuffled deck
  let shuffledDeck = [];
+ // new array for the 'open' cards
+ let openList = [];
  // restart button
  const restart = document.querySelector('.restart');
  // Restart button click event listener
  restart.addEventListener('click', function(e) {
+   console.log('beginning of function: ' + openList);
+   openList = [];
    deal(deck);
+   console.log('end of function: ' + openList);
  });
 
 
@@ -31,7 +36,6 @@
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
-
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
@@ -39,7 +43,6 @@ function shuffle(array) {
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
     return array;
 }
 
@@ -81,9 +84,68 @@ function deal(deck) {
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
  deckTable.addEventListener('click', function(e) {
-   e.target.classList.add('open');
-   if(e.target.classList.contains('card')) {
-     e.target.classList.add('open');
-     console.log('is card');
+   if( e.target.classList.contains('card') && !e.target.classList.contains('open') ) {
+     let card = e.target;
+     flip(card);
+     addToOpenList(card);
+     if(openList.length == 2) {
+       disableCardClicks();
+       let cardOne = openList[0].querySelector('i').classList.item(1);
+       let cardTwo = openList[1].querySelector('i').classList.item(1);
+       if(cardOne === cardTwo) {
+         lockMatch(openList);
+       } else {
+         shake(openList);
+         window.setTimeout(clear, 1000, openList);
+       }
+
+     }
+     console.log('openList length: ' + openList.length);
    }
  });
+
+
+
+ function flip(card) {
+   card.classList.add('open');
+   console.log('flip called: ' + card.classList);
+ }
+
+ function addToOpenList(card) {
+   openList.push(card);
+   return openList;
+ }
+
+ function lockMatch(cards) {
+   for(card of cards) {
+     card.classList.add('match', 'rubberband');
+   }
+   openList = [];
+   enableCardClicks();
+ }
+function shake(cards) {
+  for(card of cards) {
+    card.classList.add('shake');
+  }
+}
+ function clear(cards) {
+   for(card of cards) {
+     card.classList.remove('open', 'shake');
+   }
+   openList = [];
+   enableCardClicks();
+ }
+
+ function disableCardClicks() {
+   const cards = document.querySelectorAll('.card')
+   for(card of cards) {
+     card.classList.add('disabled');
+   }
+ }
+
+ function enableCardClicks() {
+   const cards = document.querySelectorAll('.card')
+   for(card of cards) {
+     card.classList.remove('disabled');
+   }
+ }

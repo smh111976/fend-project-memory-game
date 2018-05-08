@@ -33,6 +33,21 @@ h1 {
     font-weight: 300;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  * Styles for the deck of cards
  */
@@ -54,40 +69,67 @@ h1 {
 .deck .card {
     height: 125px;
     width: 125px;
-    background: #2e3d49;
     font-size: 0;
     color: #ffffff;
-    border-radius: 8px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
     position: relative;
+    perspective: 150rem;
+    -moz-perspective: 150rem;
+}
+
+.deck .card.disabled {
+  pointer-events: none;
 }
 
 .deck .card__side {
-  transition: all .8s ease;
+  transition: all .5s ease;
   background: red;
   position: absolute;
+  font-size: 2rem;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  overflow: hidden;
   pointer-events: none;
+  box-shadow: 2px 2px 5px 0 rgba(46, 61, 73, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.deck .card__side--front {
+  background: #2e3d49;
+}
+
+.deck .card__side--back {
+  transform: rotateY(180deg);
+/* light blue color */
+  background: #02b3e4;
+}
+
+.deck .card.open .card__side--front {
+  transform: rotateY(-180deg);
+}
+
+.deck .card.open .card__side--back {
+  transform: rotateY(0);
+}
+
+.deck .card.open.shake .card__side--back {
+  background-color: orangered;
 }
 
 .deck .card.open {
-    /* transform: rotateY(0);
-    background: #02b3e4; */
-    transition: all .8s;
-    transform: rotateY(180deg);
     cursor: default;
-    border: 3px solid yellow;
 }
+
+
 
 .deck .card.show {
     font-size: 33px;
@@ -95,9 +137,22 @@ h1 {
 
 .deck .card.match {
     cursor: default;
-    background: #02ccba;
-    font-size: 33px;
 }
+
+.deck .card.match .card__side--back {
+    background: #02ccba;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /*
  * Styles for the Score Panel
@@ -125,3 +180,111 @@ h1 {
     float: right;
     cursor: pointer;
 }
+
+/* animations */
+
+  .rubberband {
+    -webkit-animation-name: rubberBand;
+    animation-name: rubberBand;
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+  }
+  @-webkit-keyframes rubberBand {
+    0% {
+      -webkit-transform: scale3d(1, 1, 1);
+      transform: scale3d(1, 1, 1);
+    }
+    30% {
+      -webkit-transform: scale3d(1.25, 0.75, 1);
+      transform: scale3d(1.25, 0.75, 1);
+    }
+    40% {
+      -webkit-transform: scale3d(0.75, 1.25, 1);
+      transform: scale3d(0.75, 1.25, 1);
+    }
+    50% {
+      -webkit-transform: scale3d(1.15, 0.85, 1);
+      transform: scale3d(1.15, 0.85, 1);
+    }
+    65% {
+      -webkit-transform: scale3d(.95, 1.05, 1);
+      transform: scale3d(.95, 1.05, 1);
+    }
+    75% {
+      -webkit-transform: scale3d(1.05, .95, 1);
+      transform: scale3d(1.05, .95, 1);
+    }
+    100% {
+      -webkit-transform: scale3d(1, 1, 1);
+      transform: scale3d(1, 1, 1);
+    }
+  }
+  @keyframes rubberBand {
+    0% {
+      -webkit-transform: scale3d(1, 1, 1);
+      transform: scale3d(1, 1, 1);
+    }
+    30% {
+      -webkit-transform: scale3d(1.25, 0.75, 1);
+      transform: scale3d(1.25, 0.75, 1);
+    }
+    40% {
+      -webkit-transform: scale3d(0.75, 1.25, 1);
+      transform: scale3d(0.75, 1.25, 1);
+    }
+    50% {
+      -webkit-transform: scale3d(1.15, 0.85, 1);
+      transform: scale3d(1.15, 0.85, 1);
+    }
+    65% {
+      -webkit-transform: scale3d(.95, 1.05, 1);
+      transform: scale3d(.95, 1.05, 1);
+    }
+    75% {
+      -webkit-transform: scale3d(1.05, .95, 1);
+      transform: scale3d(1.05, .95, 1);
+    }
+    100% {
+      -webkit-transform: scale3d(1, 1, 1);
+      transform: scale3d(1, 1, 1);
+    }
+  }
+
+  .shake {
+    -webkit-animation-name: shake;
+    animation-name: shake;
+    -webkit-animation-duration: .6s;
+    animation-duration: .6s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+  }
+  @-webkit-keyframes shake {
+    0%, 100% {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      -webkit-transform: translate3d(-10px, 0, 0);
+      transform: translate3d(-10px, 0, 0);
+    }
+    20%, 40%, 60%, 80% {
+      -webkit-transform: translate3d(10px, 0, 0);
+      transform: translate3d(10px, 0, 0);
+    }
+  }
+  @keyframes shake {
+    0%, 100% {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      -webkit-transform: translate3d(-10px, 0, 0);
+      transform: translate3d(-10px, 0, 0);
+    }
+    20%, 40%, 60%, 80% {
+      -webkit-transform: translate3d(10px, 0, 0);
+      transform: translate3d(10px, 0, 0);
+    }
+  }
