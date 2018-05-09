@@ -137,6 +137,12 @@ h1 {
 
 .deck .card.match {
     cursor: default;
+    -webkit-animation-name: rubberBand;
+    animation-name: rubberBand;
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
 }
 
 .deck .card.match .card__side--back {
@@ -181,16 +187,17 @@ h1 {
     cursor: pointer;
 }
 
+.shake {
+  -webkit-animation-name: shake;
+  animation-name: shake;
+  -webkit-animation-duration: .6s;
+  animation-duration: .6s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
 /* animations */
 
-  .rubberband {
-    -webkit-animation-name: rubberBand;
-    animation-name: rubberBand;
-    -webkit-animation-duration: 1s;
-    animation-duration: 1s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-  }
   @-webkit-keyframes rubberBand {
     0% {
       -webkit-transform: scale3d(1, 1, 1);
@@ -252,14 +259,7 @@ h1 {
     }
   }
 
-  .shake {
-    -webkit-animation-name: shake;
-    animation-name: shake;
-    -webkit-animation-duration: .6s;
-    animation-duration: .6s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-  }
+
   @-webkit-keyframes shake {
     0%, 100% {
       -webkit-transform: translate3d(0, 0, 0);
