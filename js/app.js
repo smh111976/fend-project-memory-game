@@ -10,6 +10,11 @@ const deck = [ {suit: "diamond"}, {suit: "diamond"}, {suit: "paper-plane-o"}, {s
 let shuffledDeck = [];
 // create new array for the 'open' cards
 let openList = [];
+// timer variables
+let seconds = 0, minutes = 0, t, timerHasStarted = false;
+// grab time tag
+const timerWrap = document.querySelector('time');
+
 // grab card table
 const cardTable = document.querySelector('section.deck');
 // grab restart button
@@ -18,6 +23,14 @@ const restart = document.querySelector('.restart');
 const moveCounter = document.querySelector('.moves');
 // grab move counter label
 const moveCounterLabel = document.querySelector('.moves-label');
+// grab stars
+const stars = document.querySelectorAll('i.fa-star');
+// grab congratulations popup modal
+const modal = document.querySelector(".modal");
+// grab congratulations popup modal close button
+const modalCloseBtn = document.querySelector(".close-button");
+// grab modal 'play again' button
+const playAgainBtn = document.querySelector("#playAgainBtn");
 
 
 /*
@@ -42,13 +55,17 @@ restart.addEventListener('click', function() {
 cardTable.addEventListener('click', function(e) {
   /* If a card is clicked: */
   if (e.target.classList.contains('card') && !e.target.classList.contains('open')) {
+    if(!timerHasStarted) {
+      timer();
+      timerHasStarted = true;
+    }
     let card = e.target;
     /* display the card's symbol (put this functionality in another function that you call from this one) */
     flip(card);
     /* add the card to a *list* of "open" cards (put this functionality in another function that you call from this one) */
     addToOpenList(card);
     /* if the list already has another card, check to see if the two cards match */
-    if (openList.length == 2) {
+    if (openList.length === 2) {
       disableCardClicks();
       /* increment the move counter and display it on the page (put this functionality in another function that you call from this one) */
       addMove(moveCounter);
@@ -67,6 +84,18 @@ cardTable.addEventListener('click', function(e) {
   }
 });
 
+// play again button click event Listener
+playAgainBtn.addEventListener("click", function() {
+  toggleModal();
+  deal(deck);
+})
+
+// modal close button click event listener
+modalCloseBtn.addEventListener("click", toggleModal);
+
+// modal close on background screen click event listener
+window.addEventListener("click", windowOnClick);
+
 
 
 /*
@@ -75,11 +104,18 @@ cardTable.addEventListener('click', function(e) {
  *******************************************
  */
 
+
 // function - deal deck
 function deal(deck) {
   // clear out array of 'open' cards if any elements exist
   if (openList.length) {
     openList = [];
+  }
+  // reset timer
+  resetTimer();
+  // reset star rating
+  for(star of stars) {
+    star.classList.add('earned');
   }
   // reset move moveCounter
   moveCounter.textContent = 0;
@@ -119,7 +155,6 @@ function flip(card) {
 // function - add flipped card to array of 'open' cards
 function addToOpenList(card) {
   openList.push(card);
-  return openList;
 }
 
 // function - lock the matched cards into place
@@ -162,6 +197,19 @@ function addMove(moveCounter) {
   } else {
     moveCounterLabel.textContent = "Moves";
   }
+  switch (moves) {
+    case 13:
+      stars[4].classList.remove('earned');
+    break;
+    case 15:
+      stars[3].classList.remove('earned');
+    break;
+    case 17:
+      stars[2].classList.remove('earned');
+    break;
+    case 19:
+      stars[1].classList.remove('earned');
+  }
   moveCounter.textContent = moves;
 }
 
@@ -176,13 +224,25 @@ function checkforCompleteGame() {
     }
   }
   if (i === 16) {
+    clearTimeout(t);
     window.setTimeout(gameOver, 1000);
   }
 }
 
 // function - complete game
 function gameOver() {
-  alert('YOU WIN!!!');
+  let modalTime = document.querySelector(".modal-stats-time");
+  let modalMoves = document.querySelector(".modal-stats-moves");
+  let modalStars = document.querySelector(".modal-stats-stars");
+  let modalStarsEarned = document.querySelectorAll("i.earned");
+  // let modalTimeMinutes = minutes === 0 ? "" : minutes + " minutes and ";
+  let modalTimeMinutes = minutes === 0 ? "" : minutes + (minutes === 1 ? " minute" : " minutes") + " and ";
+
+  modalTime.textContent = modalTimeMinutes + seconds + " seconds";
+  modalMoves.textContent = moveCounter.textContent + " moves";
+  modalStars.textContent = modalStarsEarned.length + " out of 5 stars";
+  toggleModal();
+
 }
 
 // function - signal mismatch and turn cards back over
@@ -208,4 +268,91 @@ function enableCardClicks() {
   for (card of cards) {
     card.classList.remove('disabled');
   }
+}
+
+// function - open/close Congratulations popup
+function toggleModal() {
+  modal.classList.toggle("show-modal");
+}
+
+// function - close modal if background screen is clicked
+function windowOnClick(event) {
+  if (event.target === modal) {
+      toggleModal();
+  }
+}
+
+// function - adding time to timer
+function add() {
+  seconds++;
+  if(seconds >= 60) {
+    seconds = 0;
+    minutes++;
+  }
+  timerWrap.textContent = (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" +
+                          (seconds > 9 ? seconds : "0" + seconds);
+  timer();
+}
+
+// function - start timer
+function timer() {
+  t = setTimeout(add, 1000);
+}
+
+// function - reset timer
+function resetTimer() {
+  clearTimeout(t);
+  timerWrap.textContent = "00:00";
+  seconds = 0;
+  minutes = 0;
+  timerHasStarted = false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ *******************************************
+ * Local Storage Stuff
+ *******************************************
+ */
+
+if(storageAvailable('localStorage')) {
+  console.log('local storage is available!!!');
+} else {
+  console.log('Boo, local storage is not available');
+}
+
+function storageAvailable(type) {
+    try {
+        var storage = window[type],
+            x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch(e) {
+        return e instanceof DOMException && (
+        // everything except Firefox
+        e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === 'QuotaExceededError' ||
+        // Firefox
+        e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+        // acknowledge QuotaExceededError only if there's something already stored
+        storage.length !== 0;
+    }
 }
